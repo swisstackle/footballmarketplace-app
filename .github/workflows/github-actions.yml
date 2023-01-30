@@ -18,7 +18,7 @@ jobs:
       - name: Build and run 
         working-directory: ./backend
         run: |
+          npm install
           npm run build
-          npm install mocha
           npm run test
  
