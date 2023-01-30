@@ -2,7 +2,7 @@ name: footballmarketplace
 run-name: Backend and Frontend tests for footballmarketplace 🚀
 on: [push, pull_request]
 jobs:
-  We are testing your code.:
+  We are testing your code:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
