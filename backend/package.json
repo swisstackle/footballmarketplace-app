@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/api/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "mocha",
     "lint": "tslint -c tslint.json -p tsconfig.json",
@@ -11,7 +11,9 @@
     "tsc": "tsc",
     "build": "npm-run-all clean lint tsc",
     "dev:start": "npm-run-all build dev",
-    "start": "nodemon --watch src -e ts --exec npm run dev:start"
+    "start": "nodemon --watch src -e ts --exec npm run dev:start",
+    "prod" : "npm run dev",
+    "docker" : "docker run --rm -it $(docker build -q .)"
   },
   "author": "",
   "license": "ISC",

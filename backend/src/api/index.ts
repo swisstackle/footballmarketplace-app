@@ -24,6 +24,9 @@ const logger = winston.createLogger({
       format: winston.format.simple(),
     }));
   }
+app.get('/',(req, res, next) => {
+    res.send("Root route is working");
+});
 
 app.listen(port, () => {
     logger.log({
