@@ -1,8 +1,6 @@
 import express from 'express';
 import path from 'path';
 import winston from 'winston';
-// import serviceRoutes from "routes/service";
-// import userRoutes from "routes/user";
 
 const port: number = 3000;
 const app = express();
