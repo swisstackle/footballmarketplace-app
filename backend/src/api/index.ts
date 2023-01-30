@@ -28,7 +28,7 @@ app.get('/',(req, res, next) => {
     res.send("Root route is working");
 });
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
     logger.log({
         level: 'info',
         message: 'Server started at http://localhost:${port}'

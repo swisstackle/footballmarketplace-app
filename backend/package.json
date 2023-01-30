@@ -12,8 +12,8 @@
     "build": "npm-run-all clean lint tsc",
     "dev:start": "npm-run-all build dev",
     "start": "nodemon --watch src -e ts --exec npm run dev:start",
-    "prod" : "npm run dev",
-    "docker" : "docker run --rm -it $(docker build -q .)"
+    "prod": "npm run dev",
+    "docker": "docker run --rm -it $(docker build -q .)"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +26,7 @@
     "@types/express": "^4.17.16",
     "@types/node": "^18.11.18",
     "@types/shelljs": "^0.8.11",
+    "chai": "^4.3.7",
     "codecov": "^3.8.3",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
