@@ -49,6 +49,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - name: Build and run 
+        working-directory: ./backend
         run: |
           docker build . -t football
           docker run --rm  --name football football
