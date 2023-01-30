@@ -15,9 +15,9 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - name: "Build Docker Container"
+        run: docker build 
       - name: "Build and run Docker Container"
         working-directory: ./backend
-        runs:
-          using: 'docker'
-          image: 'Dockerfile'
+        shell: "docker run --rm -it $(docker build -q .)"
       - run: echo "🍏 This job's status is ${{ job.status }}."
