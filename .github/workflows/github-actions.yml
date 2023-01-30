@@ -18,5 +18,5 @@ jobs:
       - name: "Build and run Docker Container"
         working-directory: ./backend
         run: |
-          docker run --rm -it $(docker build -q .)
+          docker run --rm $(docker build -q .)
       - run: echo "🍏 This job's status is ${{ job.status }}."
