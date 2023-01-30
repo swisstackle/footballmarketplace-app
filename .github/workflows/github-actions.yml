@@ -17,6 +17,7 @@ jobs:
           ls ${{ github.workspace }}
       - name: "Build and run Docker Container"
         working-directory: ./backend
-        run: |
-          docker run --rm $(docker build -q .)
+        runs:
+          using: 'docker'
+          image: 'Dockerfile'
       - run: echo "🍏 This job's status is ${{ job.status }}."
