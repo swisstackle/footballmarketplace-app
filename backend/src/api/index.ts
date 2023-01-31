@@ -11,7 +11,7 @@ const doc = {
   schemes: ['http']
 };
 
-const outputFile = './backend/swagger-output.json';
+const outputFile = './swagger-output.json';
 const endpointsFiles = ['./src/api/index.ts'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
