@@ -1,24 +1,11 @@
 import express from 'express';
 import winston from 'winston';
-import swaggerAutogen from 'swagger-autogen';
-
-const doc = {
-  info: {
-    title: 'Footballmarketplace',
-    description: 'RestAPI of the football marketplace'
-  },
-  host: 'localhost:3000',
-  schemes: ['http']
-};
-
-const outputFile = './swagger-output.json';
-const endpointsFiles = ['./src/api/index.ts'];
-
-swaggerAutogen(outputFile, endpointsFiles, doc);
-
+import * as swaggerUi from 'swagger-ui-express';
+import * as swaggerFile from './swagger/swagger-output.json';
 const port: number = Number(process.env.PORT);
 const app = express();
 app.use(express.json());
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 const logger = winston.createLogger({
   level: 'info',

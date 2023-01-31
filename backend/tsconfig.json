@@ -16,8 +16,9 @@
                 "src/db/*",
                 "src/*"            
             ]
-        }  
+        },
+        "resolveJsonModule": true
     },
     "include": [ "src/**/*" ],
-    "exclude": []
+    "exclude": [],
 }
