@@ -1,8 +1,22 @@
 import express from 'express';
-import path from 'path';
 import winston from 'winston';
+import swaggerAutogen from 'swagger-autogen';
 
-const port: number = 3000;
+const doc = {
+  info: {
+    title: 'Footballmarketplace',
+    description: 'RestAPI of the football marketplace'
+  },
+  host: 'localhost:3000',
+  schemes: ['http']
+};
+
+const outputFile = './swagger-output.json';
+const endpointsFiles = ['./src/api/index.ts'];
+
+swaggerAutogen(outputFile, endpointsFiles, doc);
+
+const port: number = Number(process.env.PORT);
 const app = express();
 app.use(express.json());
 
