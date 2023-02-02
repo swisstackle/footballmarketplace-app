@@ -1,0 +1,11 @@
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: 1546
+      POSTGRES_DB: marketplace
+      POSTGRES_USER: postgres
+    build:
+      context: ./dbdockerfile
+
+    ports:
+      - 5432:5432

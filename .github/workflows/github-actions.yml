@@ -4,8 +4,21 @@ on: [push, pull_request]
 jobs:
   buildandrunlocally:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DATABASE }}
+         ports:
+          - 5432:5432
     env:
       PORT: ${{ secrets.PORT }}
+      DBPORT: 5432
+      USERNAME: ${{ secrets.USERNAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      DATABASE: ${{ secrets.DATABASE }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
