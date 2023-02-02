@@ -21,7 +21,12 @@ datasource
 const port: number = Number(process.env.PORT || 3000);
 const app: Application = express();
 app.use(express.json());
-
+app.get(
+  '/',
+  (req: Request, res: Response, next: NextFunction) => {
+    res.send("Root route is working");
+  }
+);
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use('/services', serviceRouter);
 app.use('/users', userRouter);
