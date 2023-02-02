@@ -2,7 +2,8 @@ name: footballmarketplace
 run-name: Backend and Frontend tests for footballmarketplace 🚀
 on: [push, pull_request]
 jobs:
-  buildandrunlocally:
+  build:
+    name: Build
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -11,7 +12,7 @@ jobs:
           POSTGRES_USER: ${{ secrets.USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
           POSTGRES_DB: ${{ secrets.DATABASE }}
-         ports:
+        ports:
           - 5432:5432
     env:
       PORT: ${{ secrets.PORT }}
