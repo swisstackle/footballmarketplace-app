@@ -1,4 +1,4 @@
-const server = require('../dist/index.js');
+const server = require('../dist/api/index.js');
 const chai = require("chai");
 let chaiHttp = require("chai-http");
 const { describe, it } = require('node:test');
