@@ -1,11 +1,15 @@
 services:
   postgres:
-    environment:
-      POSTGRES_PASSWORD: 1546
-      POSTGRES_DB: marketplace
-      POSTGRES_USER: postgres
     build:
       context: ./dbdockerfile
-
     ports:
-      - 5432:5432
+      - 5433:5432
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 3000:3000
+    links:
+      - "postgres"
+    depends_on:
+      - postgres
