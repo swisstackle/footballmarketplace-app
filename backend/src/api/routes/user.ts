@@ -2,11 +2,12 @@ import express, { NextFunction, Request, Response, Router } from 'express';
 import { datasource } from '../../db/connection';
 import { User } from '../../db/entities/user.entity';
 import bcrypt from 'bcrypt';
+import logger from '../../logger';
 
 const saltRounds = 10;
 const router: Router = express.Router();
 
-router.post('/register', async (req, res) => {
+router.post('/register', async (req, res, next) => {
   /*      #swagger.auto = false
             #swagger.path = '/users/register'
             #swagger.method = 'post'
@@ -22,20 +23,24 @@ router.post('/register', async (req, res) => {
                 }
             }
       */
-  const pw = await bcrypt.hash(req.body.password, saltRounds);
-  datasource
-    .createQueryBuilder()
-    .insert()
-    .into(User)
-    .values({
-      address: req.body.address,
-      name: req.body.username,
-      iscoach: false,
-      password: pw
-    })
-    .execute();
-
-  res.send('Success');
+  logger.info(req.body);
+  try {
+    const pw = await bcrypt.hash(req.body.password, saltRounds);
+    await datasource
+      .createQueryBuilder()
+      .insert()
+      .into(User)
+      .values({
+        address: req.body.address,
+        name: req.body.username,
+        iscoach: false,
+        password: pw
+      })
+      .execute();
+      res.send('Success');
+  } catch (err){
+    next(new Error(err));
+  }
 });
 
 router.post(
