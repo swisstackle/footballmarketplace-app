@@ -1,11 +1,12 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { datasource } from '../../db/connection';
 import { User } from '../../db/entities/user.entity';
-import { Service } from '../../db/entities/service.entity';
-import { Servicebought } from '../../db/entities/service_bought.entity';
+import bcrypt from 'bcrypt';
+
+const saltRounds = 10;
 const router: Router = express.Router();
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   /*      #swagger.auto = false
             #swagger.path = '/users/register'
             #swagger.method = 'post'
@@ -16,10 +17,12 @@ router.post('/register', (req, res) => {
                 required: true,
                 schema: {
                     username: "Usernameeample",
-                    address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73"
+                    address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73",
+                    password: "examplep4ssw0rd"
                 }
             }
       */
+  const pw = await bcrypt.hash(req.body.password, saltRounds);
   datasource
     .createQueryBuilder()
     .insert()
@@ -27,7 +30,8 @@ router.post('/register', (req, res) => {
     .values({
       address: req.body.address,
       name: req.body.username,
-      iscoach: false
+      iscoach: false,
+      password: pw
     })
     .execute();
 
@@ -36,7 +40,7 @@ router.post('/register', (req, res) => {
 
 router.post(
   '/registercoach',
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     /*      #swagger.auto = false
             #swagger.path = '/users/registercoach'
             #swagger.method = 'post'
@@ -47,10 +51,13 @@ router.post(
                 required: true,
                 schema: {
                     username: "Usernameeample",
-                    address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73"
+                    address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73",
+                    password: "examplep4ssw0rd"
                 }
             }
       */
+    const pw = await bcrypt.hash(req.body.password, saltRounds);
+
     datasource
       .createQueryBuilder()
       .insert()
@@ -58,7 +65,8 @@ router.post(
       .values({
         address: req.body.address,
         name: req.body.username,
-        iscoach: true
+        iscoach: true,
+        password: pw
       })
       .execute();
     res.send('Success');
@@ -67,11 +75,9 @@ router.post(
 
 router.get('/getusername', async (req: Request, res: Response) => {
   /*      #swagger.auto = false
-            #swagger.path = '/users/getusername'
             #swagger.method = 'get'
             #swagger.description = 'API endpoint to get a username given an ethereum address.'
             #swagger.parameters['address'] = {
-                in: 'path',
                 description: 'Ethereum address of wallet requesting.',
                 required: true
             }
@@ -83,15 +89,5 @@ router.get('/getusername', async (req: Request, res: Response) => {
     .getOne();
   res.send(newUser.name);
 });
-
-router.get(
-  '/getcontractaddress',
-  (req: Request, res: Response, next: NextFunction) => {
-    // solve this through github secret/env variable
-    // let addy = fs.readFileSync("address.txt");
-    // res.send(addy);
-    // Wont be possible with env variables because cant access env variables with react frontend
-  }
-);
 
 export default router;
