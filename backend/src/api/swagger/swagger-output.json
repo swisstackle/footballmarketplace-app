@@ -28,9 +28,9 @@
         "parameters": [
           {
             "name": "address",
-            "in": "path",
             "description": "Ethereum address of wallet requesting list.",
             "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -43,9 +43,9 @@
         "parameters": [
           {
             "name": "address",
-            "in": "path",
             "description": "Ethereum address of wallet requesting list.",
             "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -71,6 +71,10 @@
                 "name": {
                   "type": "string",
                   "example": "Service Name Example"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "P4ssw0rd"
                 }
               }
             }
@@ -85,9 +89,9 @@
         "parameters": [
           {
             "name": "address",
-            "in": "path",
             "description": "Ethereum address of wallet requesting list.",
             "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -117,6 +121,10 @@
                 "description": {
                   "type": "string",
                   "example": "Service Description Example."
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Ex4mpleP4ssw0rd"
                 }
               }
             }
@@ -140,6 +148,14 @@
                 "name": {
                   "type": "string",
                   "example": "Service Name Example."
+                },
+                "address": {
+                  "type": "string",
+                  "example": "address of coach"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Ex4mpl3P4ssw0rd"
                 }
               }
             }
@@ -167,6 +183,10 @@
                 "address": {
                   "type": "string",
                   "example": "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "examplep4ssw0rd"
                 }
               }
             }
@@ -194,6 +214,10 @@
                 "address": {
                   "type": "string",
                   "example": "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "examplep4ssw0rd"
                 }
               }
             }
@@ -208,19 +232,12 @@
         "parameters": [
           {
             "name": "address",
-            "in": "path",
             "description": "Ethereum address of wallet requesting.",
             "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
-        "responses": {}
-      }
-    },
-    "/users/getcontractaddress": {
-      "get": {
-        "description": "",
-        "parameters": [],
         "responses": {}
       }
     }

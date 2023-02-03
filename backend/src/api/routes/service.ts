@@ -1,9 +1,10 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import 'express-async-errors'; // Async errors are redirected to error handling middleware
 import { datasource } from '../../db/connection';
-import { User } from '../../db/entities/user.entity';
 import { Service } from '../../db/entities/service.entity';
 import { Servicebought } from '../../db/entities/service_bought.entity';
+import bcrypt from 'bcrypt';
+import { User } from '../../db/entities/user.entity';
 
 const router: Router = express.Router();
 
@@ -11,11 +12,9 @@ router.get(
   '/getAdmittedServices',
   async (req: Request, res: Response, next: NextFunction) => {
     /*      #swagger.auto = false
-            #swagger.path = '/services/getAdmittedServices'
             #swagger.method = 'get'
             #swagger.description = 'Will return the admitted services tied to a specific ethereum address.'
             #swagger.parameters['address'] = {
-                in: 'path',
                 description: 'Ethereum address of wallet requesting list.',
                 required: true
             }
@@ -34,11 +33,9 @@ router.get(
   '/getServiceRequests',
   async (req: Request, res: Response, next: NextFunction) => {
     /*      #swagger.auto = false
-            #swagger.path = '/services/getServiceRequests'
             #swagger.method = 'get'
             #swagger.description = 'Will return the requested service creations tied to a specific ethereum address.'
             #swagger.parameters['address'] = {
-                in: 'path',
                 description: 'Ethereum address of wallet requesting list.',
                 required: true
             }
@@ -53,7 +50,7 @@ router.get(
   }
 );
 
-router.post('/buy', (req: Request, res: Response, next: NextFunction) => {
+router.post('/buy', async (req: Request, res: Response, next: NextFunction) => {
   /*      #swagger.auto = false
             #swagger.path = '/services/buy'
             #swagger.method = 'post'
@@ -64,31 +61,66 @@ router.post('/buy', (req: Request, res: Response, next: NextFunction) => {
                 required: true,
                 schema: {
                     address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73",
-                    name: "Service Name Example"
+                    name: "Service Name Example",
+                    password: "P4ssw0rd"
                 }
             }
       */
-  datasource
+  const availableServices: Service[] = await datasource
+    .getRepository(Service)
     .createQueryBuilder()
-    .insert()
-    .into(Servicebought)
-    .values({
-      buyeraddress: req.body.address,
-      servicename: req.body.name
-    })
-    .execute();
-  res.send('Success');
+    .where('name = :name', { name: req.body.name })
+    .andWhere('isapproved = :isapproved', { isapproved: true })
+    .getMany();
+
+  const user: User = await datasource
+    .getRepository(User)
+    .createQueryBuilder()
+    .where('address = :address', { address: req.body.address })
+    .getOne();
+
+  let isValid: boolean = false;
+
+  if (user != null) {
+    const hash: string = user.password;
+    const passwordCorrect: boolean = await bcrypt.compare(
+      req.body.password,
+      hash
+    );
+    if (passwordCorrect) {
+      isValid = true;
+    }
+  }
+
+  if (availableServices.length !== 0 && isValid) {
+    const hash = user.password;
+
+    datasource
+      .createQueryBuilder()
+      .insert()
+      .into(Servicebought)
+      .values({
+        buyeraddress: req.body.address,
+        servicename: req.body.name
+      })
+      .execute();
+    res.send('Success');
+  } else {
+    next(
+      new Error(
+        'Wrong password or we could not find a service with the provided service name.'
+      )
+    );
+  }
 });
 
 router.get(
   '/getallservices',
   async (req: Request, res: Response, next: NextFunction) => {
     /*      #swagger.auto = false
-            #swagger.path = '/services/getallservices'
             #swagger.method = 'get'
             #swagger.description = 'Will return all admitted services given an ethereum address.'
             #swagger.parameters['address'] = {
-                in: 'path',
                 description: 'Ethereum address of wallet requesting list.',
                 required: true
             }
@@ -105,7 +137,7 @@ router.get(
 
 router.post(
   '/requestRegisterService',
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     /*      #swagger.auto = false
             #swagger.path = '/services/requestRegisterService'
             #swagger.method = 'post'
@@ -117,22 +149,43 @@ router.post(
                 schema: {
                     address: "0xdB055877e6c13b6A6B25aBcAA29B393777dD0a73",
                     name: "Service Name Example.",
-                    description: "Service Description Example."
+                    description: "Service Description Example.",
+                    password: "Ex4mpleP4ssw0rd"
                 }
             }
       */
-    datasource
+    const user: User = await datasource
+      .getRepository(User)
       .createQueryBuilder()
-      .insert()
-      .into(Service)
-      .values({
-        address: req.body.address,
-        description: req.body.description,
-        name: req.body.name,
-        isapproved: false
-      })
-      .execute();
-    res.send('Success');
+      .where('address = :address', { address: req.body.address })
+      .getOne();
+    let isValid: boolean = false;
+    if (user != null) {
+      const hash: string = user.password;
+      const passwordCorrect: boolean = await bcrypt.compare(
+        req.body.password,
+        hash
+      );
+      if (passwordCorrect) {
+        isValid = true;
+      }
+    }
+    if (isValid) {
+      datasource
+        .createQueryBuilder()
+        .insert()
+        .into(Service)
+        .values({
+          address: req.body.address,
+          description: req.body.description,
+          name: req.body.name,
+          isapproved: false
+        })
+        .execute();
+      res.send('Success');
+    } else {
+      next(new Error('Wrong password.'));
+    }
   }
 );
 
@@ -148,18 +201,39 @@ router.post(
                 description: 'Ethereum address of buyer and service name.',
                 required: true,
                 schema: {
-                    name: "Service Name Example."
+                    name: "Service Name Example.",
+                    address: "address of coach",
+                    password: "Ex4mpl3P4ssw0rd"
                 }
             }
       */
-
-    await datasource
+    const user: User = await datasource
+      .getRepository(User)
       .createQueryBuilder()
-      .update(Service)
-      .set({ isapproved: false })
-      .where('name = :name', { name: req.body.name })
-      .execute();
-    res.send('Success');
+      .where('address = :address', { address: req.body.address })
+      .getOne();
+    let isValid: boolean = false;
+    if (user != null) {
+      const hash: string = user.password;
+      const passwordCorrect: boolean = await bcrypt.compare(
+        req.body.password,
+        hash
+      );
+      if (passwordCorrect && user.iscoach) {
+        isValid = true;
+      }
+    }
+    if (isValid) {
+      await datasource
+        .createQueryBuilder()
+        .update(Service)
+        .set({ isapproved: true })
+        .where('name = :name', { name: req.body.name })
+        .execute();
+      res.send('Success');
+    } else {
+      next(new Error('Wrong password or not a coach.'));
+    }
   }
 );
 
