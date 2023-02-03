@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 @Entity()
 export class Service {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   name: string;
   @Column()
   description: string;
   @Column()
   isapproved: boolean;
+  @Column()
+  address: string;
 }

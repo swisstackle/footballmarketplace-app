@@ -6,9 +6,8 @@ import serviceRouter from './routes/service';
 import userRouter from './routes/user';
 import StatusCodes from 'http-status-codes';
 import { datasource } from '../db/connection';
-import { getConnection } from 'typeorm';
 import { User } from '../db/entities/user.entity';
-
+import { Service } from '../db/entities/service.entity';
 datasource
   .initialize()
   .then(() => {
@@ -36,6 +35,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-module.exports = app.listen(port, () => {
+export default app.listen(port, () => {
   logger.info('Server started at http://localhost:${port}');
 });

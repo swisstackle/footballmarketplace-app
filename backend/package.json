@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/api/index.js",
   "scripts": {
-    "test": "nyc --reporter=text mocha",
+    "test": "NODE_ENV=test nyc --reporter=text mocha -r ts-node/register --extension ts test/*",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "dev": "node .",
+    "dev": "NODE_ENV=dev node .",
     "clean": "rimraf dist/*",
     "tsc": "tsc",
     "build": "npm-run-all clean lint prettier-format tsc swagger-autogen",
@@ -15,7 +15,7 @@
     "prod": "npm run dev",
     "docker": "docker run --rm -it $(docker build -q .)",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "swagger-autogen": "node ./src/api/swagger/swagger.js"
+    "swagger-autogen": "node ./src/api/swagger/swagger.cjs"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/express": "^4.17.16",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",
     "@types/pg": "^8.6.6",
     "@types/shelljs": "^0.8.11",
