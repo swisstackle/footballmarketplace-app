@@ -154,37 +154,43 @@ router.post(
                 }
             }
       */
-    const user: User = await datasource
-      .getRepository(User)
-      .createQueryBuilder()
-      .where('address = :address', { address: req.body.address })
-      .getOne();
-    let isValid: boolean = false;
-    if (user != null) {
-      const hash: string = user.password;
-      const passwordCorrect: boolean = await bcrypt.compare(
-        req.body.password,
-        hash
-      );
-      if (passwordCorrect) {
-        isValid = true;
-      }
-    }
-    if (isValid) {
-      datasource
+    try {
+      const user: User = await datasource
+        .getRepository(User)
         .createQueryBuilder()
-        .insert()
-        .into(Service)
-        .values({
-          address: req.body.address,
-          description: req.body.description,
-          name: req.body.name,
-          isapproved: false
-        })
-        .execute();
-      res.send('Success');
-    } else {
-      next(new Error('Wrong password.'));
+        .where('address = :address', { address: req.body.address })
+        .getOne();
+      let isValid: boolean = false;
+      if (user != null) {
+        const hash: string = user.password;
+        const passwordCorrect: boolean = await bcrypt.compare(
+          req.body.password,
+          hash
+        );
+        if (passwordCorrect) {
+          isValid = true;
+        }
+      }
+      if (isValid) {
+        datasource
+          .createQueryBuilder()
+          .insert()
+          .into(Service)
+          .values({
+            address: req.body.address,
+            description: req.body.description,
+            name: req.body.name,
+            isapproved: false
+          })
+          .execute()
+          .then(() => {
+            res.send('Success');
+          });
+      } else {
+        next(new Error('Wrong password.'));
+      }
+    } catch (err) {
+      next(err);
     }
   }
 );
@@ -207,32 +213,36 @@ router.post(
                 }
             }
       */
-    const user: User = await datasource
-      .getRepository(User)
-      .createQueryBuilder()
-      .where('address = :address', { address: req.body.address })
-      .getOne();
-    let isValid: boolean = false;
-    if (user != null) {
-      const hash: string = user.password;
-      const passwordCorrect: boolean = await bcrypt.compare(
-        req.body.password,
-        hash
-      );
-      if (passwordCorrect && user.iscoach) {
-        isValid = true;
-      }
-    }
-    if (isValid) {
-      await datasource
+    try {
+      const user: User = await datasource
+        .getRepository(User)
         .createQueryBuilder()
-        .update(Service)
-        .set({ isapproved: true })
-        .where('name = :name', { name: req.body.name })
-        .execute();
-      res.send('Success');
-    } else {
-      next(new Error('Wrong password or not a coach.'));
+        .where('address = :address', { address: req.body.address })
+        .getOne();
+      let isValid: boolean = false;
+      if (user != null) {
+        const hash: string = user.password;
+        const passwordCorrect: boolean = await bcrypt.compare(
+          req.body.password,
+          hash
+        );
+        if (passwordCorrect && user.iscoach) {
+          isValid = true;
+        }
+      }
+      if (isValid) {
+        await datasource
+          .createQueryBuilder()
+          .update(Service)
+          .set({ isapproved: true })
+          .where('name = :name', { name: req.body.name })
+          .execute();
+        res.send('Success');
+      } else {
+        next(new Error('Wrong password or not a coach.'));
+      }
+    } catch (err) {
+      next(err);
     }
   }
 );

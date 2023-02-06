@@ -37,10 +37,10 @@ router.post('/register', async (req, res, next) => {
         password: pw
       })
       .execute();
-      res.send('Success');
-  } catch (err){
-    next(new Error(err));
+  } catch (err) {
+    next(err);
   }
+  res.send('Success');
 });
 
 router.post(
@@ -62,18 +62,21 @@ router.post(
             }
       */
     const pw = await bcrypt.hash(req.body.password, saltRounds);
-
-    datasource
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values({
-        address: req.body.address,
-        name: req.body.username,
-        iscoach: true,
-        password: pw
-      })
-      .execute();
+    try {
+      datasource
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values({
+          address: req.body.address,
+          name: req.body.username,
+          iscoach: true,
+          password: pw
+        })
+        .execute();
+    } catch (err) {
+      next(err);
+    }
     res.send('Success');
   }
 );

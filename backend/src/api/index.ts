@@ -6,19 +6,10 @@ import serviceRouter from './routes/service';
 import userRouter from './routes/user';
 import StatusCodes from 'http-status-codes';
 import { datasource } from '../db/connection';
-import { User } from '../db/entities/user.entity';
-import { Service } from '../db/entities/service.entity';
-datasource
-  .initialize()
-  .then(() => {
-    logger.info('Data Source has been initialized!');
-  })
-  .catch((err) => {
-    logger.error('Error during datasource init', err);
-  });
+import { DataSource } from 'typeorm';
 
 const port: number = Number(process.env.PORT || 3000);
-const app: Application = express();
+export const app: Application = express();
 app.use(express.json());
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Root route is working');
@@ -34,7 +25,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     error: err.message
   });
 });
-
-export default app.listen(port, () => {
-  logger.info('Server started at http://localhost:${port}');
-});
+export const init = async () => {
+  await datasource.initialize();
+  return app.listen(port, async () => {
+    logger.info('Server started at http://localhost:${port}');
+  });
+};
