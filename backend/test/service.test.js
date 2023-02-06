@@ -80,10 +80,8 @@ describe("Happy Tests for Service", () => {
             expect(res.status).toBe(200);
             done();
         });
-        
-    });
-
-    afterAll(() => {
         server.close();
     });
+
+
 });
