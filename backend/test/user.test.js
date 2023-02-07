@@ -39,6 +39,5 @@ describe("Happy Tests for Users", () => {
             expect(res.status).toBe(200);
             done();
         });
-        server.close();
     });
 });
