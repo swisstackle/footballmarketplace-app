@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "nyc --reporter=text jest test/* --detectOpenHandles",
+    "test": "nyc --reporter=text jest test/*",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "dev": "NODE_ENV=dev node .",
     "clean": "rimraf dist/*",
