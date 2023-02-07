@@ -1,4 +1,3 @@
-const { after, afterEach } = require('node:test');
 const { InsertResult } = require('typeorm').InsertResult;
 const {init, app} = require('../dist/api/index');
 const User = require('../dist/db/entities/user.entity').User;
@@ -7,23 +6,22 @@ const datasource = require('../dist/db/connection').datasource;
 const chai = require('chai');
 const chaihttp = require('chai-http');
 const bcrypt = require('bcrypt');
+const express = require('express');
 
 chai.use(chaihttp);
-let server = null;
+let server;
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 describe("Happy Tests for Service", () => {
-    
     beforeAll(async () => {
         const pw = await bcrypt.hash("apassword", 10);
-       
         server = await init();
         await datasource
         .createQueryBuilder()
         .insert()
-         .into(User)
+        .into(User)
         .values({
         address: "testaddress",
         name: "testusername",
@@ -34,7 +32,7 @@ describe("Happy Tests for Service", () => {
       await datasource
         .createQueryBuilder()
         .insert()
-         .into(User)
+        .into(User)
         .values({
         address: "testcoachaddress",
         name: "testcoach",
@@ -42,7 +40,6 @@ describe("Happy Tests for Service", () => {
         password: pw
       })
       .execute();
-
     });
     it("Register Service passed", (done) => {
         chai.request(app)
@@ -53,10 +50,6 @@ describe("Happy Tests for Service", () => {
             expect(res.status).toBe(200);
             done();
         });
-        
-        //jest.spyOn(datasource.createQueryBuilder().insert().into(User).values(Any), 'execute').mockImplementation(() => { return "test";})
-        
-        
     });
     it("Admit Service passed", (done) => {
         //jest.spyOn(datasource.createQueryBuilder().insert().into(User).values(Any), 'execute').mockImplementation(() => { return "test";})
@@ -68,7 +61,6 @@ describe("Happy Tests for Service", () => {
             expect(res.status).toBe(200);
             done();
         });
-        
     });
     it("Buy Service passed", (done) => {
         //jest.spyOn(datasource.createQueryBuilder().insert().into(User).values(Any), 'execute').mockImplementation(() => { return "test";})
@@ -82,6 +74,4 @@ describe("Happy Tests for Service", () => {
         });
         server.close();
     });
-
-
 });

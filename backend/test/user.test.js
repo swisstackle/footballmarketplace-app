@@ -6,6 +6,7 @@ const logger = require('../dist/logger');
 const datasource = require('../dist/db/connection').datasource;
 const chai = require('chai');
 const chaihttp = require('chai-http');
+const express = require('express');
 
 chai.use(chaihttp);
 let server = null;
@@ -40,5 +41,4 @@ describe("Happy Tests for Users", () => {
         });
         server.close();
     });
-  
 });
