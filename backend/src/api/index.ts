@@ -25,9 +25,18 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     error: err.message
   });
 });
-export const init = async () => {
+export const initDb = async () => {
   await datasource.initialize();
-  return app.listen(port, async () => {
+};
+export const startListening = () => {
+  return app.listen(port, () => {
     logger.info('Server started at http://localhost:${port}');
   });
+};
+export const init = async () => {
+  await initDb();
+  return startListening();
+};
+export const teardownDb = async () => {
+  await datasource.destroy();
 };
